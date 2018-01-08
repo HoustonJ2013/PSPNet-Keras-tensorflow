@@ -284,6 +284,7 @@ if __name__ == "__main__":
 
         class_image = np.argmax(class_scores, axis=2)
         pm = np.max(class_scores, axis=2)
+        np.save("test.npy", class_scores)
         print(pm)
         colored_class_image = utils.color_class_image(class_image, args.model)
         # colored_class_image is [0.0-1.0] img is [0-255]
