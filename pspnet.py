@@ -276,6 +276,7 @@ if __name__ == "__main__":
             EVALUATION_SCALES = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]  # must be all floats!
             EVALUATION_SCALES = [0.15, 0.25, 0.5]  # must be all floats!
 
+
         class_scores = predict_multi_scale(img, pspnet, EVALUATION_SCALES, args.sliding, args.flip)
 
         print("Writing results...")

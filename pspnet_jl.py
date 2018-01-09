@@ -238,9 +238,12 @@ if __name__ == "__main__":
                         choices=['pspnet50_ade20k',
                                  'pspnet101_cityscapes',
                                  'pspnet101_voc2012'])
+    parser.add_argument('-il', '--input_list', type=str, default='example_images/ade20k.jpg',
+                        help='Path the input image')
+
     parser.add_argument('-i', '--input_path', type=str, default='example_images/ade20k.jpg',
                         help='Path the input image')
-    parser.add_argument('-o', '--output_path', type=str, default='example_results/ade20k.jpg',
+    parser.add_argument('-o', '--output_path', type=str, default='results/',
                         help='Path to output')
     parser.add_argument('--id', default="0")
     parser.add_argument('-s', '--sliding', action='store_true',
@@ -257,7 +260,6 @@ if __name__ == "__main__":
     K.set_session(sess)
 
     with sess.as_default():
-        img = misc.imread(args.input_path)
         print(args)
 
         if "pspnet50" in args.model:
@@ -278,18 +280,14 @@ if __name__ == "__main__":
             EVALUATION_SCALES = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]  # must be all floats!
             EVALUATION_SCALES = [0.15, 0.25, 0.5]  # must be all floats!
 
-        class_scores = predict_multi_scale(img, pspnet, EVALUATION_SCALES, args.sliding, args.flip)
+        list_sample = [x.rstrip() for x in open(args.input_list, 'r')]
+        print(list_sample)
 
-        print("Writing results...")
+        for input_name in list_sample:
+            img = misc.imread(input_name, mode="RGB")
+            class_scores = predict_multi_scale(img, pspnet, EVALUATION_SCALES, args.sliding, args.flip)
 
-        class_image = np.argmax(class_scores, axis=2)
-        pm = np.max(class_scores, axis=2)
-        np.save("test.npy", class_scores)
-        print(pm)
-        colored_class_image = utils.color_class_image(class_image, args.model)
-        # colored_class_image is [0.0-1.0] img is [0-255]
-        alpha_blended = 0.5 * colored_class_image + 0.5 * img
-        filename, ext = splitext(args.output_path)
-        misc.imsave(filename + "_seg" + ext, colored_class_image)
-        misc.imsave(filename + "_probs" + ext, pm)
-        misc.imsave(filename + "_seg_blended" + ext, alpha_blended)
+            print("Predicting for ", input_name)
+            class_image = np.argmax(class_scores, axis=2)
+            output_name = input_name.split("/")[-1].replace(".jpg", "").replace(".png", "")
+            np.save(join(args.output_path,output_name), class_image.astype("int16") + 1)
