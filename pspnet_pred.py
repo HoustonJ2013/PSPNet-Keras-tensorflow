@@ -278,10 +278,9 @@ if __name__ == "__main__":
 
         if args.multi_scale:
             EVALUATION_SCALES = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]  # must be all floats!
-            EVALUATION_SCALES = [0.15, 0.25, 0.5]  # must be all floats!
+            #EVALUATION_SCALES = [0.15, 0.25, 0.5]  # must be all floats!
 
         list_sample = [x.rstrip() for x in open(args.input_list, 'r')]
-        print(list_sample)
 
         for input_name in list_sample:
             img = misc.imread(input_name, mode="RGB")
